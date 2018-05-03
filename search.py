@@ -142,16 +142,18 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     
     queue = util.PriorityQueue()
     state = problem.getStartState()
-    queue.push((state, []), _heuristic(state))
+    queue.push((state, [], 0), _heuristic(state))
     visited = set()
     while not queue.isEmpty():
-        position, path = queue.pop()
+        position, path, prev_cost = queue.pop()
         if position not in visited:
             if problem.isGoalState(position):
                 return path
             visited.add(position)
-            for state, direction, _ in problem.getSuccessors(position):
-                queue.push((state, path + [direction]), _heuristic(state))
+            for state, actions, cost in problem.getSuccessors(position):
+                cost += prev_cost
+                actions = path + [actions]
+                queue.push((state, actions, cost), cost + _heuristic(state))
 
 
 # Abbreviations
